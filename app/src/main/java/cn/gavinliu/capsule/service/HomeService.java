@@ -3,11 +3,14 @@ package cn.gavinliu.capsule.service;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.iflytek.cloud.ErrorCode;
@@ -18,6 +21,7 @@ import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SpeechRecognizer;
 
+import cn.gavinliu.capsule.ui.floating.FloatingWindowView;
 import cn.gavinliu.capsule.util.HomeWatcher;
 
 /**
@@ -36,6 +40,10 @@ public class HomeService extends Service {
 
     private Toast mToast;
 
+    private WindowManager mWindowManager;
+
+    private FloatingWindowView mFloatingWindowView;
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -51,18 +59,35 @@ public class HomeService extends Service {
         mHomeWatcher.setOnHomePressedListener(new HomeWatcher.OnHomePressedListener() {
             @Override
             public void onHomeDoubleTap() {
-                setParam();
-                int ret = mSpeechRecognizer.startListening(mRecognizerListener);
-                if (ret != ErrorCode.SUCCESS) {
-                    showTip("听写失败,错误码：" + ret);
-                } else {
-                    showTip("开始");
+//                setParam();
+//                int ret = mSpeechRecognizer.startListening(mRecognizerListener);
+//                if (ret != ErrorCode.SUCCESS) {
+//                    showTip("听写失败,错误码：" + ret);
+//                } else {
+//                    showTip("开始");
+//                }
+
+                if (mFloatingWindowView == null) {
+                    mFloatingWindowView = FloatingWindowView.newInstance(getApplication());
+
+                    WindowManager.LayoutParams layoutParams = createWindowLayoutParams();
+                    layoutParams.x = 0;
+                    layoutParams.y = 0;
+                    layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+                    layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
+
+                    mWindowManager.addView(mFloatingWindowView, layoutParams);
                 }
+
+                mFloatingWindowView.shownToggle();
+
             }
         });
         mHomeWatcher.startWatch();
 
         mSpeechRecognizer = SpeechRecognizer.createRecognizer(this, mInitListener);
+
+        mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
     }
 
     @Override
@@ -86,6 +111,23 @@ public class HomeService extends Service {
 //        startForeground(1, notification);
 
         return START_STICKY;
+    }
+
+    private WindowManager.LayoutParams createWindowLayoutParams() {
+        WindowManager.LayoutParams windowLayoutParams = new WindowManager.LayoutParams();
+        windowLayoutParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
+        windowLayoutParams.format = PixelFormat.RGBA_8888;
+        windowLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+        windowLayoutParams.flags = windowLayoutParams.flags | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH;
+        windowLayoutParams.flags = windowLayoutParams.flags | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS;
+        windowLayoutParams.flags = windowLayoutParams.flags | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
+        windowLayoutParams.flags = windowLayoutParams.flags | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD;
+        windowLayoutParams.flags = windowLayoutParams.flags | WindowManager.LayoutParams.FLAG_FULLSCREEN;
+        windowLayoutParams.flags = windowLayoutParams.flags | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
+        windowLayoutParams.alpha = 1.0f;
+        windowLayoutParams.gravity = Gravity.START | Gravity.TOP;
+
+        return windowLayoutParams;
     }
 
     public void setParam() {
