@@ -5,4 +5,8 @@ package cn.gavinliu.capsule.ui;
  */
 
 public interface BasePresenter {
+
+    void subscribe();
+
+    void unsubscribe();
 }

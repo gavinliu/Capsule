@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.preference.PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <android.support.v7.preference.PreferenceCategory
+        android:title="功能">
+
+        <android.support.v7.preference.CheckBoxPreference
+            android:defaultValue="false"
+            android:key="isNotify"
+            android:summary="xxxxxxx"
+            android:title="AAAAAAAAA" />
+
+        <android.support.v7.preference.PreferenceScreen
+            android:key="permission"
+            android:summary="权限不足，请点击"
+            android:title="申请权限"
+            android:widgetLayout="@layout/base_preference_screen_widget" />
+
+    </android.support.v7.preference.PreferenceCategory>
+
+    <android.support.v7.preference.PreferenceCategory
+        android:title="关于">
+
+        <android.support.v7.preference.PreferenceScreen
+            android:key="openSource"
+            android:summary="https://github.com/gavinliu/Capsule"
+            android:title="Open Source"
+            android:widgetLayout="@layout/base_preference_screen_widget" />
+
+    </android.support.v7.preference.PreferenceCategory>
+
+</android.support.v7.preference.PreferenceScreen>

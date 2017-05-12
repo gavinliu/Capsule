@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import cn.gavinliu.capsule.R;
 import cn.gavinliu.capsule.service.HomeService;
+import cn.gavinliu.capsule.ui.setting.SettingFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -15,5 +16,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         startService(new Intent(this, HomeService.class));
+
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.container, SettingFragment.newInstance())
+                    .commitAllowingStateLoss();
+        }
     }
 }

@@ -21,6 +21,7 @@ import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SpeechRecognizer;
 
+import cn.gavinliu.capsule.ui.floating.FloatingWindowPresenter;
 import cn.gavinliu.capsule.ui.floating.FloatingWindowView;
 import cn.gavinliu.capsule.util.HomeWatcher;
 
@@ -43,6 +44,7 @@ public class HomeService extends Service {
     private WindowManager mWindowManager;
 
     private FloatingWindowView mFloatingWindowView;
+    private FloatingWindowPresenter mFloatingWindowPresenter;
 
     @Nullable
     @Override
@@ -77,9 +79,13 @@ public class HomeService extends Service {
                     layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
 
                     mWindowManager.addView(mFloatingWindowView, layoutParams);
+
+                    mFloatingWindowPresenter = new FloatingWindowPresenter(mFloatingWindowView);
                 }
 
                 mFloatingWindowView.shownToggle();
+
+                mFloatingWindowPresenter.startSpeechRecognizer();
 
             }
         });
