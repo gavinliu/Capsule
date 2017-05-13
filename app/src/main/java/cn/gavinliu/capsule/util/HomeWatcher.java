@@ -20,17 +20,14 @@ public class HomeWatcher {
     private Context mContext;
     private IntentFilter mFilter;
     private InnerReceiver mReceiver;
-    private OnHomePressedListener mListener;
+    private Listener mListener;
 
     private long mTapTime;
 
-    public HomeWatcher(Context context) {
+    public HomeWatcher(Context context, Listener listener) {
         mContext = context;
-        mFilter = new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
-    }
-
-    public void setOnHomePressedListener(OnHomePressedListener listener) {
         mListener = listener;
+        mFilter = new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         mReceiver = new InnerReceiver();
     }
 
@@ -49,13 +46,18 @@ public class HomeWatcher {
     class InnerReceiver extends BroadcastReceiver {
 
         /**
-         * copy from PhoneWindowManager
+         * base reason copy from PhoneWindowManager
          */
         static public final String SYSTEM_DIALOG_REASON_KEY = "reason";
-        static public final String SYSTEM_DIALOG_REASON_GLOBAL_ACTIONS = "globalactions";
-        static public final String SYSTEM_DIALOG_REASON_RECENT_APPS = "recentapps";
-        static public final String SYSTEM_DIALOG_REASON_HOME_KEY = "homekey";
+        static public final String SYSTEM_DIALOG_REASON_GLOBAL_ACTIONS = "globalactions"; // 长按电源键
+        static public final String SYSTEM_DIALOG_REASON_RECENT_APPS = "recentapps"; // 最近任务
+        static public final String SYSTEM_DIALOG_REASON_HOME_KEY = "homekey"; // home 键
         static public final String SYSTEM_DIALOG_REASON_ASSIST = "assist";
+
+        /**
+         * special reason
+         */
+        static public final String SYSTEM_DIALOG_REASON_VOICE = "voiceinteraction"; // 原生 Android 长按 home 键，出现 Google now
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -65,20 +67,41 @@ public class HomeWatcher {
                 if (reason != null) {
                     Log.e(TAG, "==> action:" + action + ", reason:" + reason);
 
-                    if (reason.equals(SYSTEM_DIALOG_REASON_HOME_KEY)) {
-                        long time = System.currentTimeMillis();
-                        if (time - mTapTime <= DOUBLE_TAP_TIMEOUT) {
-                            Log.e(TAG, "<== onHomeDoubleTap");
-                            if (mListener != null) mListener.onHomeDoubleTap();
+                    String triggerWay = Settings.getInstance().getTriggerWay();
+
+                    switch (reason) {
+
+                        case SYSTEM_DIALOG_REASON_HOME_KEY: {
+                            if (!"1".equals(triggerWay)) {
+                                break;
+                            }
+                            long time = System.currentTimeMillis();
+                            boolean isDoubleTap = time - mTapTime <= DOUBLE_TAP_TIMEOUT;
+                            mTapTime = time;
+
+                            if (isDoubleTap) {
+                                Log.e(TAG, "<== onHomeDoubleTap");
+                                if (mListener != null) mListener.onTrigger();
+                            }
+                            break;
                         }
-                        mTapTime = time;
+
+                        case SYSTEM_DIALOG_REASON_VOICE: {
+                            if (!"2".equals(triggerWay)) {
+                                break;
+                            }
+
+                            if (mListener != null) mListener.onTrigger();
+                            break;
+                        }
                     }
+
                 }
             }
         }
     }
 
-    public interface OnHomePressedListener {
-        void onHomeDoubleTap();
+    public interface Listener {
+        void onTrigger();
     }
 }

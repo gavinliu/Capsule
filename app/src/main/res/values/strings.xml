@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Capsule</string>
+
+    <string-array name="trigger_way">
+        <item>双击Home</item>
+        <item>长按Home</item>
+    </string-array>
+    <string-array name="trigger_way_value">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
 </resources>

@@ -57,38 +57,7 @@ public class HomeService extends Service {
         super.onCreate();
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-        mHomeWatcher = new HomeWatcher(this);
-        mHomeWatcher.setOnHomePressedListener(new HomeWatcher.OnHomePressedListener() {
-            @Override
-            public void onHomeDoubleTap() {
-//                setParam();
-//                int ret = mSpeechRecognizer.startListening(mRecognizerListener);
-//                if (ret != ErrorCode.SUCCESS) {
-//                    showTip("听写失败,错误码：" + ret);
-//                } else {
-//                    showTip("开始");
-//                }
-
-                if (mFloatingWindowView == null) {
-                    mFloatingWindowView = FloatingWindowView.newInstance(getApplication());
-
-                    WindowManager.LayoutParams layoutParams = createWindowLayoutParams();
-                    layoutParams.x = 0;
-                    layoutParams.y = 0;
-                    layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
-                    layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
-
-                    mWindowManager.addView(mFloatingWindowView, layoutParams);
-
-                    mFloatingWindowPresenter = new FloatingWindowPresenter(mFloatingWindowView);
-                }
-
-                mFloatingWindowView.shownToggle();
-
-                mFloatingWindowPresenter.startSpeechRecognizer();
-
-            }
-        });
+        mHomeWatcher = new HomeWatcher(this, mHomeWatcherListener);
         mHomeWatcher.startWatch();
 
         mSpeechRecognizer = SpeechRecognizer.createRecognizer(this, mInitListener);
@@ -135,6 +104,37 @@ public class HomeService extends Service {
 
         return windowLayoutParams;
     }
+
+    private HomeWatcher.Listener mHomeWatcherListener = new HomeWatcher.Listener() {
+        @Override
+        public void onTrigger() {
+//            setParam();
+//            int ret = mSpeechRecognizer.startListening(mRecognizerListener);
+//            if (ret != ErrorCode.SUCCESS) {
+//                showTip("听写失败,错误码：" + ret);
+//            } else {
+//                showTip("开始");
+//            }
+
+            if (mFloatingWindowView == null) {
+                mFloatingWindowView = FloatingWindowView.newInstance(getApplication());
+
+                WindowManager.LayoutParams layoutParams = createWindowLayoutParams();
+                layoutParams.x = 0;
+                layoutParams.y = 0;
+                layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+                layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
+
+                mWindowManager.addView(mFloatingWindowView, layoutParams);
+
+                mFloatingWindowPresenter = new FloatingWindowPresenter(mFloatingWindowView);
+            }
+
+            mFloatingWindowView.shownToggle();
+
+            mFloatingWindowPresenter.startSpeechRecognizer();
+        }
+    };
 
     public void setParam() {
         // 清空参数

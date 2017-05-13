@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.preference.PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <android.support.v7.preference.PreferenceCategory
-        android:title="功能">
+    <android.support.v7.preference.PreferenceCategory android:title="功能">
 
-        <android.support.v7.preference.CheckBoxPreference
-            android:defaultValue="false"
-            android:key="isNotify"
-            android:summary="xxxxxxx"
-            android:title="AAAAAAAAA" />
+        <android.support.v7.preference.ListPreference
+            android:defaultValue="1"
+            android:dialogTitle="选择"
+            android:entries="@array/trigger_way"
+            android:entryValues="@array/trigger_way_value"
+            android:key="trigger_way"
+            android:summary="当前为双击home键"
+            android:title="触发方式"
+            android:widgetLayout="@layout/base_preference_list_widget" />
 
         <android.support.v7.preference.PreferenceScreen
             android:key="permission"
@@ -19,11 +21,10 @@
 
     </android.support.v7.preference.PreferenceCategory>
 
-    <android.support.v7.preference.PreferenceCategory
-        android:title="关于">
+    <android.support.v7.preference.PreferenceCategory android:title="关于">
 
         <android.support.v7.preference.PreferenceScreen
-            android:key="openSource"
+            android:key="open_source"
             android:summary="https://github.com/gavinliu/Capsule"
             android:title="Open Source"
             android:widgetLayout="@layout/base_preference_screen_widget" />
