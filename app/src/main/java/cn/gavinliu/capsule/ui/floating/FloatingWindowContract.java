@@ -11,7 +11,7 @@ import cn.gavinliu.capsule.ui.BaseView;
 public interface FloatingWindowContract {
 
     interface View extends BaseView<Presenter> {
-        void shownToggle();
+        boolean shownToggle();
 
         void showSpeechRecognizerView();
     }

@@ -67,31 +67,26 @@ public class HomeWatcher {
                 if (reason != null) {
                     Log.e(TAG, "==> action:" + action + ", reason:" + reason);
 
-                    String triggerWay = Settings.getInstance().getTriggerWay();
-
                     switch (reason) {
 
                         case SYSTEM_DIALOG_REASON_HOME_KEY: {
-                            if (!"1".equals(triggerWay)) {
-                                break;
-                            }
                             long time = System.currentTimeMillis();
                             boolean isDoubleTap = time - mTapTime <= DOUBLE_TAP_TIMEOUT;
                             mTapTime = time;
 
                             if (isDoubleTap) {
                                 Log.e(TAG, "<== onHomeDoubleTap");
-                                if (mListener != null) mListener.onTrigger();
+                                if (mListener != null) mListener.onDoubleTap();
+                            } else {
+                                Log.e(TAG, "<== onHomeTap");
+                                if (mListener != null) mListener.onTap();
                             }
                             break;
                         }
 
                         case SYSTEM_DIALOG_REASON_VOICE: {
-                            if (!"2".equals(triggerWay)) {
-                                break;
-                            }
-
-                            if (mListener != null) mListener.onTrigger();
+                            Log.e(TAG, "<== onHomeLongPressed");
+                            if (mListener != null) mListener.onLongPressed();
                             break;
                         }
                     }
@@ -102,6 +97,10 @@ public class HomeWatcher {
     }
 
     public interface Listener {
-        void onTrigger();
+        void onTap();
+
+        void onDoubleTap();
+
+        void onLongPressed();
     }
 }

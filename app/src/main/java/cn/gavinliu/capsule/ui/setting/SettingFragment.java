@@ -105,13 +105,11 @@ public class SettingFragment extends PreferenceFragmentCompat {
                     @Override
                     public void accept(@NonNull Boolean aBoolean) throws Exception {
                         if (aBoolean) {
-                            if (Build.VERSION.SDK_INT >= 23) {
-                                if (!Settings.canDrawOverlays(getActivity())) {
-                                    Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:cn.gavinliu.capsule"));
-                                    startActivityForResult(intent, 0);
-                                } else {
-                                    updatePermissionSummary(findPreference("permission"), true);
-                                }
+                            if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(getActivity())) {
+                                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:cn.gavinliu.capsule"));
+                                startActivityForResult(intent, 0);
+                            } else {
+                                updatePermissionSummary(findPreference("permission"), true);
                             }
                         } else {
                             updatePermissionSummary(findPreference("permission"), false);

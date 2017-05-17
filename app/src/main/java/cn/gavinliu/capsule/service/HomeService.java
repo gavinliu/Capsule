@@ -24,6 +24,7 @@ import com.iflytek.cloud.SpeechRecognizer;
 import cn.gavinliu.capsule.ui.floating.FloatingWindowPresenter;
 import cn.gavinliu.capsule.ui.floating.FloatingWindowView;
 import cn.gavinliu.capsule.util.HomeWatcher;
+import cn.gavinliu.capsule.util.Settings;
 
 /**
  * Created by Gavin on 17-5-10.
@@ -106,16 +107,31 @@ public class HomeService extends Service {
     }
 
     private HomeWatcher.Listener mHomeWatcherListener = new HomeWatcher.Listener() {
-        @Override
-        public void onTrigger() {
-//            setParam();
-//            int ret = mSpeechRecognizer.startListening(mRecognizerListener);
-//            if (ret != ErrorCode.SUCCESS) {
-//                showTip("听写失败,错误码：" + ret);
-//            } else {
-//                showTip("开始");
-//            }
 
+        @Override
+        public void onTap() {
+            if (mFloatingWindowView != null && mFloatingWindowView.isShown()) {
+                mFloatingWindowView.shownToggle();
+            }
+        }
+
+        @Override
+        public void onDoubleTap() {
+            String type = Settings.getInstance().getTriggerWay();
+            if ("1".equals(type)) {
+                onTrigger();
+            }
+        }
+
+        @Override
+        public void onLongPressed() {
+            String type = Settings.getInstance().getTriggerWay();
+            if ("2".equals(type)) {
+                onTrigger();
+            }
+        }
+
+        private void onTrigger() {
             if (mFloatingWindowView == null) {
                 mFloatingWindowView = FloatingWindowView.newInstance(getApplication());
 

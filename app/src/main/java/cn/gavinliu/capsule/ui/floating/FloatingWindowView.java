@@ -33,11 +33,13 @@ public class FloatingWindowView extends FrameLayout implements FloatingWindowCon
     private TextView mTextView;
 
     @Override
-    public void shownToggle() {
+    public boolean shownToggle() {
         if (getVisibility() == GONE) {
             setVisibility(VISIBLE);
+            return true;
         } else {
             setVisibility(GONE);
+            return false;
         }
     }
 
